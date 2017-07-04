@@ -11,11 +11,14 @@ all_url_set = set()
 
 for keyword in keywords:
     query = {'q': keyword}
-    r = requests.get(search_engine, params=query)
-    bs = BeautifulSoup(r.text, "lxml")
+    #head = requests.head(search_engine, params=query)
+    get = requests.get(search_engine, params=query)
+    if "html" not in get.headers['Content-Type']:
+        continue
+    bs = BeautifulSoup(get.text, "lxml")
 
-    for c in  bs.find_all("a"):
-        url = c.attrs['href']
+    for a in  bs.find_all("a"):
+        url = a.attrs['href']
         if [e for e in excludes if e in url]:
             continue
         match = re.search(google_re_pattern, url)
